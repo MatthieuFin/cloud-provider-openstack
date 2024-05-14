@@ -52,7 +52,7 @@ stringData:
 
 Create a secret per openstack cluster which contains a key `cloud` and as value the subsection's name of corresponding openstack cluster in configuration file.
 
-These secrets are referenced in storageClass definitions to permit to identify openstack cluster assocaited to the storageClass.
+These secrets are referenced in storageClass definitions to identify openstack cluster associated to the storageClass.
 
 ```yaml
 apiVersion: v1
@@ -134,9 +134,12 @@ volumeBindingMode: Immediate
 
 ### Create a csi-cinder-nodeplugin daemonset per cluster openstack
 
-Daemonsets should deploy pods on nodes from proper openstack we suppose that node have a label `topology.kubernetes.io/region` with the openstack cluster name as value (you could managed this via kubespray, manually, whatever, it should be great to implement this in openstack cloud controller manager).
+Daemonsets should deploy pods on nodes from proper openstack context. We suppose that the node have a label `topology.kubernetes.io/region` with the openstack cluster name as value (you could manage this with kubespray, manually, whatever, it should be great to implement this in openstack cloud controller manager).
 
-use nodeSelector to match proper nodes labels, add cli argument `--additionnal-topology topology.kubernetes.io/region=region-one` which should correspond to node labels to container cinder-csi-plugin, and add cli argument `--cloud-name="region-one"` which should correspond to configuration file subsection name to container cinder-csi-plugin.
+Do as follows:
+- Use nodeSelector to match proper nodes labels
+- Add cli argument `--additionnal-topology topology.kubernetes.io/region=region-one`, which should match node labels, to container cinder-csi-plugin
+- Add cli argument `--cloud-name="region-one"`, which should match configuration file subsection name, to container cinder-csi-plugin.
 
 ```yaml
 apiVersion: apps/v1
@@ -242,9 +245,9 @@ spec:
 
 ### Configure csi-cinder-controllerplugin deployment
 
-Enable feature gate Topology on container csi-provisioner of csi-cinder-controllerplugin deployment by adding cli argument ``--feature-gates="Topology=true"
+Enable Topology feature-gate on container csi-provisioner of csi-cinder-controllerplugin deployment by adding cli argument ``--feature-gates="Topology=true"
 
-Add cli argument `--cloud-name="region-one"` per openstack cluster to manage, name should be match configuration file subsection name.
+Add cli argument `--cloud-name="region-one"` for each managed openstack cluster, name should match configuration file subsection name, to container `cinder-csi-plugin`.
 
 
 ```yaml
